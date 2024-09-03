@@ -2,7 +2,7 @@ name: Run Tests on Linux
 on:
   push: {}
 jobs:
-  test:
+  build:
     runs-on: ${{ matrix.os }}
     needs: build
     strategy:
