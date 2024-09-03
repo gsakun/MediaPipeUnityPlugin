@@ -51,7 +51,7 @@ jobs:
           cd ..
           npm install -g ./unity-license-activate
           unity-license-activate "$UNITY_EMAIL" "$UNITY_PASSWORD" Unity_v${{ matrix.unityVersion }}.alf --authenticator-key "$UNITY_TOTP_KEY"
-      - name: Activate License
+      - name: Activate License And Cat
         run: |
           unity-editor -quit -batchmode -nographics -logFile -manualLicenseFile $(ls Unity_*.ulf) || true
           ls Unity_*.ulf | xargs -I {} cat {}
