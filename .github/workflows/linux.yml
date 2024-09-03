@@ -1,19 +1,6 @@
 name: Run Tests on Linux
 on:
-  workflow_call:
-    inputs:
-      ref:
-        type: string
-      is_master:
-        type: boolean
-        default: false
-    secrets:
-      UNITY_EMAIL:
-        required: true
-      UNITY_PASSWORD:
-        required: true
-      UNITY_TOTP_KEY:
-        required: true
+  push: {}
 jobs:
   test:
     runs-on: ${{ matrix.os }}
