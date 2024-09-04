@@ -22,8 +22,6 @@ jobs:
 
       - name: Generate a license activation file
         run: |
-          unity-editor -quit -batchmode -returnlicense -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD"
-          sleep 60
           unity-editor -quit -createManualActivationFile -logFile || true
       - name: Request a Unity license file
         env:
@@ -57,4 +55,3 @@ jobs:
           pwd
           ls ~/.local/share/unity3d/Unity/
           ls ~/.cache
-          unity-editor -quit -batchmode -returnlicense -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD"
