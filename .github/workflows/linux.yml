@@ -23,6 +23,8 @@ jobs:
 
       - name: Generate a license activation file
         run: |
+          unity-editor -quit -batchmode -returnlicense -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD"
+          sleep 60
           unity-editor -quit -createManualActivationFile -logFile || true
       - name: Request a Unity license file
         env:
@@ -41,10 +43,19 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: example-artifact
+          name: png
           path: error.png
+      - name: Upload artifact even on failure
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ulf
+          path: Unity_*.ulf
       - name: Activate License And Cat
         if: success()
         run: |
           unity-editor -quit -batchmode -nographics -logFile -manualLicenseFile $(ls Unity_*.ulf) || true
-          ls Unity_*.ulf | xargs -I {} cat {}
+          pwd
+          ls ~/.local/share/unity3d/Unity/
+          ls ~/.cache
+          unity-editor -quit -batchmode -returnlicense -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD"
