@@ -12,17 +12,9 @@ jobs:
         unityVersion:
           - 2021.3.33f1
     steps:
-      - name: Install UnityEditor
-        run: |
-          sudo docker cp $(docker create --rm unityci/editor:${{ matrix.unityVersion }}-base-3):/opt/unity /opt/unity
-          sudo chown -R $(id -u):$(id -g) /opt/unity
-
-          echo -e '#!/bin/bash\nxvfb-run -ae /dev/stdout /opt/unity/Editor/Unity -batchmode "$@"' | sudo tee -a /usr/bin/unity-editor
-          sudo chmod +x /usr/bin/unity-editor
-
       - name: Generate a license activation file
         run: |
-          unity-editor -quit -createManualActivationFile -logFile || true
+          echo ${{ secret.UNITY_ALF  }} > Unity_v2021.3.33f1.alf
       - name: Request a Unity license file
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -35,7 +27,8 @@ jobs:
           npm install
           cd ..
           npm install -g ./unity-license-activate
-          unity-license-activate "$UNITY_EMAIL" "$UNITY_PASSWORD" Unity_v${{ matrix.unityVersion }}.alf --authenticator-key "$UNITY_TOTP_KEY"
+          unity-license-activate "$UNITY_EMAIL" "$UNITY_PASSWORD" Unity_v2021.3.33f1.alf --authenticator-key "$UNITY_TOTP_KEY"
+          ls | xargs -I {} mv {} Unity_lic.ulf
       - name: Upload artifact even on failure
         if: failure()
         uses: actions/upload-artifact@v3
@@ -47,11 +40,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ulf
-          path: Unity_*.ulf
-      - name: Activate License And Cat
-        if: success()
-        run: |
-          unity-editor -quit -batchmode -nographics -logFile -manualLicenseFile $(ls Unity_*.ulf) || true
-          pwd
-          ls ~/.local/share/unity3d/Unity/
-          ls ~/.cache
+          path: Unity_lic.ulf
