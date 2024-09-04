@@ -37,7 +37,14 @@ jobs:
           cd ..
           npm install -g ./unity-license-activate
           unity-license-activate "$UNITY_EMAIL" "$UNITY_PASSWORD" Unity_v${{ matrix.unityVersion }}.alf --authenticator-key "$UNITY_TOTP_KEY"
+      - name: Upload artifact even on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: example-artifact
+          path: error.png
       - name: Activate License And Cat
+        if: success()
         run: |
           unity-editor -quit -batchmode -nographics -logFile -manualLicenseFile $(ls Unity_*.ulf) || true
           ls Unity_*.ulf | xargs -I {} cat {}
